@@ -1,5 +1,11 @@
-// components/map/DrawControls.tsx
-import React from 'react';
+
+import React from "react";
+import {
+
+    Triangle,
+    Square,
+    Circle, MapPin,
+} from "lucide-react";
 
 interface Props {
     onDraw: (type: string) => void;
@@ -7,22 +13,22 @@ interface Props {
 
 export const DrawControls: React.FC<Props> = ({ onDraw }) => {
     const buttons = [
-        { type: 'marker', label: '🖊️', color: 'bg-green-500', title: 'رسم مارکر' },
-        { type: 'polygon', label: '🔺', color: 'bg-blue-500', title: 'رسم چندضلعی' },
-        { type: 'rectangle', label: '▭', color: 'bg-purple-500', title: 'رسم مستطیل' },
-        { type: 'circle', label: '⚪', color: 'bg-red-500', title: 'رسم دایره' },
+        { type: "marker", icon: <MapPin className="w-4 h-4 text-white" />, color: "bg-teal-700", title: "Draw marker" },
+        { type: "polygon", icon: <Triangle className="w-4 h-4 text-white" />, color: "bg-teal-700", title: "Draw polygon" },
+        { type: "rectangle", icon: <Square className="w-4 h-4 text-white" />, color: "bg-teal-700", title: "Draw rectangle" },
+        { type: "circle", icon: <Circle className="w-4 h-4 text-white" />, color: "bg-teal-700", title: "Draw circle" },
     ];
 
     return (
-        <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-3">
-            {buttons.map(btn => (
+        <div className="absolute top-52 left-4 z-[1000] flex flex-col gap-3">
+            {buttons.map((btn) => (
                 <button
                     key={btn.type}
                     onClick={() => onDraw(btn.type)}
-                    className={`w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-white hover:brightness-110 transition-all ${btn.color}`}
+                    className={`w-9 h-9 rounded-xl shadow-md flex items-center justify-center hover:scale-105 transition-all hover:brightness-110 ${btn.color}`}
                     title={btn.title}
                 >
-                    {btn.label}
+                    {btn.icon}
                 </button>
             ))}
         </div>

@@ -11,29 +11,60 @@ import { ShapeLayer } from './ShapeLayer';
 import { PopupModal } from './PopupModal';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
+import {MapControls} from "@/Components/Map/MapControls";
 
 const MapPage = () => {
     const { markers, shapes, addMarker, addShape, deleteMarker, deleteShape } = useMapData();
     const { drawingMode, deleteMode, setDeleteMode, triggerDraw, activePopup, setActivePopup, setDrawingMode } = useDrawing();
 
+    const [tempLayer, setTempLayer] = React.useState<any>(null);
+
     const handleCreated = (e: any) => {
         const layer = e.layer;
-        if (drawingMode === 'marker') {
+        setTempLayer(layer);
+
+        if (drawingMode === "marker") {
             const { lat, lng } = layer.getLatLng();
-            setActivePopup({ type: 'marker', lat, lng });
+            setActivePopup({ type: "marker", lat, lng });
         } else {
             const data = layer.toGeoJSON();
-            setActivePopup({ type: 'shape', data });
+            if (layer.getRadius) {
+                data.properties = { ...data.properties, radius: layer.getRadius() };
+            }
+            setActivePopup({ type: "shape", data });
         }
     };
 
     const handleSavePopup = (title: string, desc: string) => {
         if (!activePopup) return;
-        if (activePopup.type === 'marker') addMarker({ lat: activePopup.lat, lng: activePopup.lng, title, description: desc, color: '#3b82f6', createdAt: new Date() });
-        else addShape({ data: activePopup.data, title, description: desc, createdAt: new Date() });
+
+        if (activePopup.type === 'marker') {
+            addMarker({
+                lat: activePopup.lat,
+                lng: activePopup.lng,
+                title,
+                description: desc,
+                color: '#3b82f6',
+                createdAt: new Date(),
+            });
+        } else {
+            addShape({
+                data: activePopup.data,
+                title,
+                description: desc,
+                createdAt: new Date(),
+            });
+        }
+
+        if (tempLayer) {
+            tempLayer.remove();
+            setTempLayer(null);
+        }
+
         setActivePopup(null);
         setDrawingMode('');
     };
+
 
     return (
         <div className="relative w-full h-screen">
@@ -42,6 +73,7 @@ const MapPage = () => {
 
             <MapContainer center={[35.3149, 46.9988]} zoom={13} style={{ height: '100%', width: '100%' }}>
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <MapControls />
 
                 <FeatureGroup>
                     <EditControl
@@ -64,8 +96,19 @@ const MapPage = () => {
             </MapContainer>
 
             {activePopup && (
-                <PopupModal onCancel={() => setActivePopup(null)} onSave={handleSavePopup} />
+                <PopupModal
+                    onCancel={() => {
+                        if (tempLayer) {
+                            tempLayer.remove();
+                            setTempLayer(null);
+                        }
+                        setActivePopup(null);
+                        setDrawingMode("");
+                    }}
+                    onSave={handleSavePopup}
+                />
             )}
+
         </div>
     );
 };
