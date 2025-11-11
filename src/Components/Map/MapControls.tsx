@@ -32,29 +32,6 @@ export const MapControls: React.FC<MapControlsProps> = () => {
         );
     };
 
-    const handleSearch = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!searchQuery.trim()) return;
-
-        try {
-            const res = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`
-            );
-            const data = await res.json();
-            if (data && data.length > 0) {
-                const { lat, lon, display_name } = data[0];
-                map.setView([parseFloat(lat), parseFloat(lon)], 14);
-                L.marker([parseFloat(lat), parseFloat(lon)])
-                    .addTo(map)
-                    .bindPopup(display_name)
-                    .openPopup();
-            } else {
-                alert('no location found.');
-            }
-        } catch {
-            alert('please try again.');
-        }
-    };
 
     return (
         <div className="absolute left-4 top-4 z-[1000] flex flex-col gap-3">
@@ -105,26 +82,7 @@ export const MapControls: React.FC<MapControlsProps> = () => {
                 </div>
             </div>
             {/* Search Box */}
-        {/*    <form
-                onSubmit={handleSearch}
-                className="mt-4 bg-white rounded-lg shadow-md p-2 flex items-center gap-2 w-44"
-            >
-                <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="search by places ..."
-                    className="flex-1 text-sm border rounded-md p-1 outline-none"
-                />
-                <button
-                    type="submit"
-                    className="px-2 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
-                >
-                    <span className="tooltip">search</span>
-
-                    🔍
-                </button>
-            </form>f*/}
+        {/*   f*/}
         </div>
     );
 };

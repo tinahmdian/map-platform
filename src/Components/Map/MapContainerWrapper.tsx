@@ -1,4 +1,5 @@
 'use client';
+import "@/utils/markerIcon";
 import React, {useEffect, useRef} from 'react';
 import {MapContainer, TileLayer, FeatureGroup, useMapEvents, useMap} from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
@@ -13,6 +14,8 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import {db} from "@/db/db";
 import {MapControls} from "@/Components/Map/MapControls";
+import SearchInput from "@/Components/Map/SearchInput";
+
 
 const MapPage = () => {
     const { markers, shapes, addMarker, addShape, deleteMarker, deleteShape } = useMapData();
@@ -147,7 +150,7 @@ const MapPage = () => {
             }} center={[35.3149, 46.9988]} zoom={13} style={{ height: '100%', width: '100%' }}>
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <MapControls />
-
+                <SearchInput/>
                 <FeatureGroup>
                     <EditControl
                         position="topright"
