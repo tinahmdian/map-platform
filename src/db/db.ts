@@ -33,7 +33,7 @@ class AppDB extends Dexie {
         super('AppDB');
 
         this.version(2).stores({
-            mapState: '++id, centerLat, centerLng, zoom, activeLayer',
+            mapState: '++id, centerLat, centerLng, zoom',
             markers: '++id, lat, lng, title, description,settingId',
             settings: '++id, name, color, visibility, createdAt',
             shapes: '++id, data,settingId, createdAt'
