@@ -19,13 +19,13 @@
 // export const db = new MyDatabase();
 import { Dexie } from 'dexie';
 
-import {MapState} from "@/Types/components/Map";
+// import {MapState} from "@/Types/components/Map";
 
 
 class AppDB extends Dexie {
-    mapState!: Dexie.Table<MapState, number>;
-    // markers!: Dexie.Table<MarkerData, number>;
-    // // shapes!: Dexie.Table<Shape, number>;
+    mapState!: Dexie.Table<any, number>;
+    markers!: Dexie.Table<any, number>;
+    shapes!: Dexie.Table<any, number>;
     // settings!: Dexie.Table<Setting, number>;
 
 
@@ -33,10 +33,10 @@ class AppDB extends Dexie {
         super('AppDB');
 
         this.version(2).stores({
-            mapState: '++id, centerLat, centerLng, zoom, activeLayer',
-            // markers: '++id, lat, lng, title, description,settingId',
-            // settings: '++id, name, color, visibility, createdAt',
-            // shapes: '++id, data,settingId, createdAt'
+            mapState: '++id, centerLat, centerLng, zoom',
+            markers: '++id, lat, lng, title, description,settingId',
+            settings: '++id, name, color, visibility, createdAt',
+            shapes: '++id, data,settingId, createdAt'
 
         });
     }
