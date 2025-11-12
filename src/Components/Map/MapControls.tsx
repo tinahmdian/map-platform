@@ -2,19 +2,51 @@
 import React, { useState, useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { Locate, Plus, Minus, Settings } from 'lucide-react';
-import { SettingsPopup } from './SettingPopup';
+import { Locate, Plus, Minus, Settings, Cloud } from 'lucide-react';
+import { SettingsPopup } from '@/Components/Setting/SettingPopup';
 
 interface MapControlsProps {
     markers?: any[];
     shapes?: any[];
     onStatsRefresh?: () => void;
+    onHeatmapToggle?: (visible: boolean) => void;
+    onHeatmapSettingsChange?: (settings: {
+        intensity: number;
+        radius: number;
+        blur: number;
+    }) => void;
+    heatmapVisible?: boolean;
+    heatmapSettings?: {
+        intensity: number;
+        radius: number;
+        blur: number;
+    };
+    onWeatherHeatmapToggle?: (visible: boolean) => void;
+    onWeatherHeatmapSettingsChange?: (settings: {
+        weatherType:'temperature' | 'precipitation' | 'pressure' | 'clouds'|'wind'|'snow';
+        opacity: number;
+        updateInterval: number;
+    }) => void;
+    weatherHeatmapVisible?: boolean;
+    weatherHeatmapSettings?: {
+        weatherType: 'temperature' | 'precipitation' | 'pressure' | 'clouds'|'wind'|'snow';
+        opacity: number;
+        updateInterval: number;
+    };
 }
 
 export const MapControls: React.FC<MapControlsProps> = ({
                                                             markers = [],
                                                             shapes = [],
-                                                            onStatsRefresh
+                                                            onStatsRefresh,
+                                                            onHeatmapToggle,
+                                                            onHeatmapSettingsChange,
+                                                            heatmapVisible = false,
+                                                            heatmapSettings = { intensity: 1.0, radius: 25, blur: 15 },
+                                                            onWeatherHeatmapToggle,
+                                                            onWeatherHeatmapSettingsChange,
+                                                            weatherHeatmapVisible = false,
+                                                            weatherHeatmapSettings = { weatherType: 'temperature', opacity: 0.7, updateInterval: 30 },
                                                         }) => {
     const map = useMap();
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -25,7 +57,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
         bounds: map.getBounds()
     });
 
-    // Update current location when map moves
     useEffect(() => {
         const updateLocation = () => {
             setCurrentLocation({
@@ -83,7 +114,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
                 url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         }
 
-        // Remove existing tile layers and add new one
         map.eachLayer((layer) => {
             if (layer instanceof L.TileLayer) {
                 map.removeLayer(layer);
@@ -105,7 +135,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
     return (
         <>
             <div className="absolute left-4 top-4 z-[1000] flex flex-col gap-3">
-                {/* Zoom In Button */}
                 <div className="relative group">
                     <button
                         onClick={handleZoomIn}
@@ -118,7 +147,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
                     </div>
                 </div>
 
-                {/* Zoom Out Button */}
                 <div className="relative group">
                     <button
                         onClick={handleZoomOut}
@@ -131,7 +159,20 @@ export const MapControls: React.FC<MapControlsProps> = ({
                     </div>
                 </div>
 
-                {/* Settings Button */}
+                <div className="relative group">
+                    <button
+                        onClick={() => onWeatherHeatmapToggle?.(!weatherHeatmapVisible)}
+                        className={`w-9 h-9 rounded-xl shadow-md flex items-center justify-center hover:scale-105 transition-all hover:brightness-110 cursor-pointer ${
+                            weatherHeatmapVisible ? 'bg-blue-600' : 'bg-teal-700'
+                        }`}
+                    >
+                        <Cloud className={`w-4 h-4 text-white ${weatherHeatmapVisible ? 'animate-pulse' : ''}`} />
+                    </button>
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 text-sm text-white bg-gray-700 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                        {weatherHeatmapVisible ? 'Disable weather heatmap' : 'Enable weather heatmap'}
+                    </div>
+                </div>
+
                 <div className="relative group">
                     <button
                         onClick={() => setIsSettingsOpen(true)}
@@ -144,7 +185,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
                     </div>
                 </div>
 
-                {/* Locate Me Button */}
                 <div className="relative group">
                     <button
                         onClick={handleLocateMe}
@@ -158,16 +198,24 @@ export const MapControls: React.FC<MapControlsProps> = ({
                 </div>
             </div>
 
-            {/* Settings Popup */}
+            {/* Setting Popup */}
             <SettingsPopup
                 isOpen={isSettingsOpen}
                 onClose={() => setIsSettingsOpen(false)}
                 onBaseMapChange={handleBaseMapChange}
                 onLayerToggle={handleLayerToggle}
+                onHeatmapToggle={onHeatmapToggle}
+                onHeatmapSettingsChange={onHeatmapSettingsChange}
+                onWeatherHeatmapToggle={onWeatherHeatmapToggle}
+                onWeatherHeatmapSettingsChange={onWeatherHeatmapSettingsChange}
                 currentLocation={currentLocation}
                 markers={markers}
                 shapes={shapes}
                 onRefreshStats={handleRefreshStats}
+                heatmapVisible={heatmapVisible}
+                heatmapSettings={heatmapSettings}
+                weatherHeatmapVisible={weatherHeatmapVisible}
+                weatherHeatmapSettings={weatherHeatmapSettings}
             />
         </>
     );
