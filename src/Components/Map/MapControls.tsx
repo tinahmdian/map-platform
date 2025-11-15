@@ -142,7 +142,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
                     >
                         <Plus className="w-4 h-4 text-white" />
                     </button>
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 text-sm text-white bg-gray-700 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    <div className="absolute bottom-1/2 left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 text-sm text-white bg-gray-700 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                         Zoom in
                     </div>
                 </div>
@@ -156,20 +156,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
                     </button>
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 text-sm text-white bg-gray-700 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                         Zoom out
-                    </div>
-                </div>
-
-                <div className="relative group">
-                    <button
-                        onClick={() => onWeatherHeatmapToggle?.(!weatherHeatmapVisible)}
-                        className={`w-9 h-9 rounded-xl shadow-md flex items-center justify-center hover:scale-105 transition-all hover:brightness-110 cursor-pointer ${
-                            weatherHeatmapVisible ? 'bg-blue-600' : 'bg-teal-700'
-                        }`}
-                    >
-                        <Cloud className={`w-4 h-4 text-white ${weatherHeatmapVisible ? 'animate-pulse' : ''}`} />
-                    </button>
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 text-sm text-white bg-gray-700 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                        {weatherHeatmapVisible ? 'Disable weather heatmap' : 'Enable weather heatmap'}
                     </div>
                 </div>
 
