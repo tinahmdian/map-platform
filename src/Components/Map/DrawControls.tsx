@@ -20,16 +20,21 @@ export const DrawControls: React.FC<Props> = ({ onDraw }) => {
     ];
 
     return (
-        <div className="absolute top-52 left-4 z-[1000] flex flex-col gap-3">
+        <div className="absolute top-52 left-4 z-[2000] flex flex-col gap-3">
             {buttons.map((btn) => (
-                <button
-                    key={btn.type}
-                    onClick={() => onDraw(btn.type)}
-                    className={`w-9 h-9 rounded-xl shadow-md flex items-center justify-center hover:scale-105 transition-all hover:brightness-110 ${btn.color}`}
-                    title={btn.title}
-                >
-                    {btn.icon}
-                </button>
+                <div key={btn.type} className="relative group">
+                    <button
+
+                        onClick={() => onDraw(btn.type)}
+                        className={`w-9 h-9 rounded-xl cursor-pointer shadow-md flex items-center justify-center hover:scale-105 transition-all hover:brightness-110 ${btn.color}`}
+                    >
+                        {btn.icon}
+                    </button>
+                    <div className="absolute bottom-full left-full transform -translate-x-1/2 mb-2 w-max px-2 py-1 text-sm text-white bg-gray-700 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                        {btn.title}
+                    </div>
+                </div>
+
             ))}
         </div>
     );
