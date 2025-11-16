@@ -7,7 +7,7 @@ import { useMapData } from '@/utils/useMapData';
 import { useDrawing } from '@/utils/useDrawing';
 import { DrawControls } from './DrawControls';
 import { DeleteButton } from './DeleteButton';
-import { MarkerLayer } from './MarkerLayer';
+import {getMarkerIcon, MarkerLayer} from './MarkerLayer';
 import { ShapeLayer } from './ShapeLayer';
 import { PopupModal } from './PopupModal';
 import 'leaflet/dist/leaflet.css';
@@ -17,6 +17,7 @@ import {MapControls} from "@/Components/Map/MapControls";
 import SearchInput from "@/Components/Map/SearchInput";
 import {HeatmapLayer} from "@/Components/Map/heatMapLayer";
 import {WeatherHeatmapLayer} from "@/Components/Map/WeatherHeatmapLayer";
+import {DeleteTooltip} from "@/Components/Map/DeleteTooltip";
 
 const MapPage = () => {
     const { markers, shapes, addMarker, addShape, deleteMarker, deleteShape } = useMapData();
@@ -25,7 +26,6 @@ const MapPage = () => {
     const mapRef = useRef<L.Map | null>(null);
     const [tempLayer, setTempLayer] = React.useState<any>(null);
 
-    // Heatmap state
     const [heatmapVisible, setHeatmapVisible] = useState(false);
     const [heatmapSettings, setHeatmapSettings] = useState({
         intensity: 1.0,
@@ -110,8 +110,9 @@ const MapPage = () => {
     const handleCreated = (e: any) => {
         const layer = e.layer;
         setTempLayer(layer);
-
+        layer.setIcon(getMarkerIcon('red'));
         if (drawingMode === "marker") {
+
             const { lat, lng } = layer.getLatLng();
             setActivePopup({ type: "marker", lat, lng });
         } else {
@@ -171,6 +172,7 @@ const MapPage = () => {
 
     return (
         <div className="relative w-full h-screen">
+            <DeleteTooltip deleteMode={deleteMode} />
             <DrawControls onDraw={triggerDraw} />
             <DeleteButton active={deleteMode} onToggle={() => setDeleteMode(!deleteMode)} />
 

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { db } from '@/db/db';
+import {useDrawing} from "@/utils/useDrawing";
 
 export function useMapData() {
+    const {setDeleteMode}=useDrawing()
     const [markers, setMarkers] = useState<any[]>([]);
     const [shapes, setShapes] = useState<any[]>([]);
 
@@ -29,6 +31,7 @@ export function useMapData() {
 
     const deleteMarker = async (id: number) => {
         await db.markers.delete(id);
+        setDeletMode(false)
         setMarkers((prev) => prev.filter((m) => m.id !== id));
     };
 
