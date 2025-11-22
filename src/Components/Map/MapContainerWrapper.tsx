@@ -1,27 +1,37 @@
 'use client';
-import "@/utils/markerIcon";
+import "@/Components/Map/MapFeatures/markerIcon";
 import React, {useEffect, useRef, useState} from 'react';
-import {MapContainer, TileLayer, FeatureGroup, useMapEvents, useMap} from 'react-leaflet';
+import {MapContainer, TileLayer, FeatureGroup, useMapEvents, useMap, Polyline, Popup, Marker} from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { useMapData } from '@/utils/useMapData';
 import { useDrawing } from '@/utils/useDrawing';
-import { DrawControls } from './DrawControls';
-import { DeleteButton } from './DeleteButton';
-import {getMarkerIcon, MarkerLayer} from './MarkerLayer';
-import { ShapeLayer } from './ShapeLayer';
-import { PopupModal } from './PopupModal';
+import { DrawControls } from './MapFeatures/DrawControls';
+import { DeleteButton } from './MapFeatures/DeleteButton';
+import {getMarkerIcon, MarkerLayer} from './MapFeatures/MarkerLayer';
+import { ShapeLayer } from './MapFeatures/ShapeLayer';
+import { PopupModal } from './MapFeatures/PopupModal';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import {db} from "@/db/db";
-import {MapControls} from "@/Components/Map/MapControls";
-import SearchInput from "@/Components/Map/SearchInput";
-import {HeatmapLayer} from "@/Components/Map/heatMapLayer";
-import {WeatherHeatmapLayer} from "@/Components/Map/WeatherHeatmapLayer";
-import {DeleteTooltip} from "@/Components/Map/DeleteTooltip";
+import {MapControls} from "@/Components/Map/MapFeatures/MapControls";
+import SearchInput from "@/Components/Map/MapFeatures/SearchInput";
+import {HeatmapLayer} from "@/Components/Map/MapFeatures/heatMapLayer";
+import {WeatherHeatmapLayer} from "@/Components/Map/MapFeatures/weatherHeatMapLayer";
+import {DeleteTooltip} from "@/Components/Map/MapFeatures/DeleteTooltip";
+import polyline from "@mapbox/polyline";
+
+declare global {
+    interface Window {
+        leafletMap: L.Map|null;
+    }
+}
 
 const MapPage = () => {
     const { markers, shapes, addMarker, addShape, deleteMarker, deleteShape } = useMapData();
     const { drawingMode, deleteMode, setDeleteMode, triggerDraw, activePopup, setActivePopup, setDrawingMode } = useDrawing();
+    const [distanceMode, setDistanceMode] = useState(false);
+    const [distancePoints, setDistancePoints] = useState<{ lat: number, lng: number }[]>([]);
+    const [distanceLine, setDistanceLine] = useState<>([]);
 
     const mapRef = useRef<L.Map | null>(null);
     const [tempLayer, setTempLayer] = React.useState<any>(null);
@@ -39,6 +49,38 @@ const MapPage = () => {
         opacity: 0.7,
         updateInterval: 30, // minutes
     });
+    const handleDrawAction = (type: string) => {
+        if (type === "distance") {
+            setDistanceLine([]);
+            console.log(distanceLine)
+            setDistanceMode(!distanceMode);
+            setDistancePoints([]);
+            setDrawingMode("");
+            return;
+        }
+
+        triggerDraw(type);
+    };
+
+    const [distanceKm, setDistanceKm] = useState<number | null>(null);
+    async function getDistance(p1, p2) {
+        const url = `https://us1.locationiq.com/v1/directions/driving/${p1.lng},${p1.lat};${p2.lng},${p2.lat}?key=pk.1b4a43969b61b1b0ba70c09d85e847f0&steps=true`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+        console.log(data)
+        const distanceMeters = data.routes[0].distance;
+        const durationSeconds = data.routes[0].duration;
+        const polylineEncoded = data.routes[0].geometry;
+        const coords = polyline.decode(polylineEncoded);
+        setDistanceLine(coords.map(([lat, lng]) => [lat, lng]));
+setDistanceMode(false)
+        setDistanceKm(data.routes[0].distance / 1000);
+        return {
+            distanceKm: (distanceMeters / 1000).toFixed(2),
+            durationMin: (durationSeconds / 60).toFixed(1)
+        };
+    }
 
     const saveMapState = async (
         lat?: number,
@@ -67,6 +109,20 @@ const MapPage = () => {
         }, [map]);
 
         useMapEvents({
+            click: async (e) => {
+                if (!distanceMode) return;
+
+                const { lat, lng } = e.latlng;
+                const newPoint = { lat: e.latlng.lat, lng: e.latlng.lng };
+                const newPoints = [...distancePoints, newPoint];
+                setDistancePoints(newPoints);
+                if (newPoints.length === 2) {
+                    getDistance(newPoints[0], newPoints[1]);
+                    setDistanceMode(false);
+                    return [];
+                }
+
+            },
             moveend: () => {
                 saveMapState(
                     map.getCenter().lat,
@@ -110,9 +166,8 @@ const MapPage = () => {
     const handleCreated = (e: any) => {
         const layer = e.layer;
         setTempLayer(layer);
-        layer.setIcon(getMarkerIcon('red'));
         if (drawingMode === "marker") {
-
+            layer.setIcon(getMarkerIcon('red'));
             const { lat, lng } = layer.getLatLng();
             setActivePopup({ type: "marker", lat, lng });
         } else {
@@ -173,7 +228,7 @@ const MapPage = () => {
     return (
         <div className="relative w-full h-screen">
             <DeleteTooltip deleteMode={deleteMode} />
-            <DrawControls onDraw={triggerDraw} />
+            <DrawControls onDraw={handleDrawAction} />
             <DeleteButton active={deleteMode} onToggle={() => setDeleteMode(!deleteMode)} />
 
             <MapContainer
@@ -233,7 +288,23 @@ const MapPage = () => {
                 )}
 
                 <MapEvents/>
-
+                {distanceLine.length ==0&&distancePoints.map((p, idx)=>(
+                    <Marker key={idx} position={[p.lat, p.lng]}/>
+                ))}
+                {distanceLine.length > 0 && (
+                    <>
+                        <Polyline positions={distanceLine} color="red" weight={4} />
+                        <Marker position={distanceLine[0]}>
+                            <Popup>origin</Popup>
+                        </Marker>
+                        <Marker position={distanceLine[distanceLine.length-1]}>
+                            <Popup>
+                                destination:
+                                {distanceKm!==null && <div>distance: {distanceKm.toFixed(2)} km</div>}
+                            </Popup>
+                        </Marker>
+                    </>
+                )}
                 <HeatmapLayer
                     markers={markers}
                     shapes={shapes}

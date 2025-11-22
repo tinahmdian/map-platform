@@ -4,7 +4,7 @@ import {
 
     Triangle,
     Square,
-    Circle, MapPin,
+    Circle, MapPin, Ruler,
 } from "lucide-react";
 
 interface Props {
@@ -17,6 +17,7 @@ export const DrawControls: React.FC<Props> = ({ onDraw }) => {
         { type: "polygon", icon: <Triangle className="w-4 h-4 text-white" />, color: "bg-teal-700", title: "Draw polygon" },
         { type: "rectangle", icon: <Square className="w-4 h-4 text-white" />, color: "bg-teal-700", title: "Draw rectangle" },
         { type: "circle", icon: <Circle className="w-4 h-4 text-white" />, color: "bg-teal-700", title: "Draw circle" },
+        { type: "distance", icon: <Ruler className="w-4 h-4 text-white" />, color: "bg-indigo-700", title: "Measure distance" },
     ];
 
     return (
