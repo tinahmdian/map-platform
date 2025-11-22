@@ -13,6 +13,42 @@ interface HeatmapLayerProps {
     blur?: number;
     maxZoom?: number;
 }
+// declare module "leaflet" {
+//     function heatLayer(
+//         latlngs: L.LatLngExpression[],
+//         options?: {
+//             minOpacity?: number;
+//             maxZoom?: number;
+//             radius?: number;
+//             blur?: number;
+//             gradient?: Record<number, string>;
+//             max?: number;
+//         }
+//     ): L.Layer;
+// }
+declare module "leaflet" {
+    interface HeatLayer extends L.Layer {
+        setLatLngs(latlngs: L.LatLngExpression[]): this;
+        addLatLng(latlng: L.LatLngExpression): this;
+    }
+
+    function heatLayer(
+        latlngs: L.LatLngExpression[],
+        options?: {
+            minOpacity?: number;
+            maxZoom?: number;
+            radius?: number;
+            blur?: number;
+            gradient?: Record<number, string>;
+            max?: number;
+        }
+    ): HeatLayer;
+}
+//
+// interface HeatLayer extends L.Layer {
+//     setLatLngs(latlngs: L.LatLngExpression[]): this;
+//     addLatLng(latlng: L.LatLngExpression): this;
+// }
 
 export const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
                                                               markers,
@@ -24,7 +60,7 @@ export const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
                                                               maxZoom = 6,
                                                           }) => {
     const map = useMap();
-    const heatLayerRef = useRef<L.HeatLayer | null>(null);
+    const heatLayerRef = useRef<L.Layer | null>(null);
 
     const calculateAverageCoordinates = (): [number, number, number][] => {
         const points: [number, number, number][] = [];
