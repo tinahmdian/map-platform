@@ -2,10 +2,9 @@
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 import { SettingsPopupProps } from '@/types/types';
-import { TABS } from './constants';
 import { useStatistics, useLocalSettings } from '@/utils/useSetting';
-import { formatCoordinate, formatBounds, exportData, importData } from '@/utils/settingFunctions';
-import { MapTab } from './tabs/MapTab';
+import { exportData, importData } from '@/utils/settingFunctions';
+import { MapTab } from './Tabs/MapTab';
 import { WeatherTab } from './Tabs/WeatherTab';
 import { HeatmapTab } from './Tabs/HetaMapTab';
 import { StatsTab } from './Tabs/StatsTab';
