@@ -68,6 +68,7 @@ const MapPage = () => {
 
         const res = await fetch(url);
         const data = await res.json();
+        console.log(data)
         const distanceMeters = data.routes[0].distance;
         const durationSeconds = data.routes[0].duration;
         const polylineEncoded = data.routes[0].geometry;
