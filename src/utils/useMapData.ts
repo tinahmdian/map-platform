@@ -31,7 +31,7 @@ export function useMapData() {
 
     const deleteMarker = async (id: number) => {
         await db.markers.delete(id);
-        setDeletMode(false)
+        setDeleteMode(false)
         setMarkers((prev) => prev.filter((m) => m.id !== id));
     };
 
