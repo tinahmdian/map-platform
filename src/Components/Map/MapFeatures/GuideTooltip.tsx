@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export const DeleteTooltip = ({ deleteMode }: { deleteMode: boolean }) => {
+export const GuideTooltip = ({ deleteMode,distanceMode }: { deleteMode: boolean,distanceMode: boolean }) => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
@@ -8,16 +8,17 @@ export const DeleteTooltip = ({ deleteMode }: { deleteMode: boolean }) => {
             setMousePos({ x: e.clientX + 15, y: e.clientY + 15 });
         };
 
-        if (deleteMode) {
+        if (deleteMode||distanceMode) {
             window.addEventListener("mousemove", handleMove);
         } else {
             setMousePos({ x: 0, y: 0 });
         }
 
         return () => window.removeEventListener("mousemove", handleMove);
-    }, [deleteMode]);
+    }, [deleteMode,distanceMode]);
 
-    if (!deleteMode) return null;
+    if (!deleteMode && !distanceMode) return null;
+
 
     return (
         <div
@@ -28,7 +29,7 @@ export const DeleteTooltip = ({ deleteMode }: { deleteMode: boolean }) => {
                 transform: "translate(-50%, -50%)",
             }}
         >
-            Click on the shape you want to delete
+            {deleteMode?'Click on the shape you want to delete':distanceMode?'click on the origin and destination you want ':''}
         </div>
     );
 };
