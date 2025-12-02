@@ -4,7 +4,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {MapContainer, TileLayer, FeatureGroup, useMapEvents, useMap, Polyline, Popup, Marker} from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { useMapData } from '@/utils/useMapData';
-import { useDrawing } from '@/utils/useDrawing';
+import { useDrawing } from '@/context/useDrawing';
 import { DrawControls } from './MapFeatures/DrawControls';
 import { DeleteButton } from './MapFeatures/DeleteButton';
 import {getMarkerIcon, MarkerLayer} from './MapFeatures/MarkerLayer';
@@ -19,6 +19,7 @@ import {HeatmapLayer} from "@/Components/Map/MapFeatures/heatMapLayer";
 import {WeatherHeatmapLayer} from "@/Components/Map/MapFeatures/weatherHeatMapLayer";
 import { GuideTooltip} from "@/Components/Map/MapFeatures/GuideTooltip";
 import polyline from "@mapbox/polyline";
+import {useMessage} from "@/context/useMessage";
 
 declare global {
     interface Window {
@@ -32,10 +33,9 @@ const MapPage = () => {
     const [distanceMode, setDistanceMode] = useState(false);
     const [distancePoints, setDistancePoints] = useState<{ lat: number, lng: number }[]>([]);
     const [distanceLine, setDistanceLine] = useState<{ lat: number, lng: number }[]>([]);
-
+    const { handleOpenMessage } = useMessage();
     const mapRef = useRef<L.Map | null>(null);
     const [tempLayer, setTempLayer] = React.useState<any>(null);
-
     const [heatmapVisible, setHeatmapVisible] = useState(false);
     const [heatmapSettings, setHeatmapSettings] = useState({
         intensity: 1.0,
@@ -58,7 +58,7 @@ const MapPage = () => {
             setDrawingMode("");
             return;
         }
-
+        setDistanceMode(false);
         triggerDraw(type);
     };
 
@@ -80,7 +80,6 @@ const MapPage = () => {
             const polylineEncoded = data.routes[0].geometry;
             const coords: [number, number][] = polyline.decode(polylineEncoded);
             setDistanceLine(coords.map(([lat, lng]) => ({ lat, lng })));
-
             setDistanceKm(data.routes[0].distance / 1000);
             return {
                 distanceKm: (distanceMeters / 1000).toFixed(2),
@@ -88,6 +87,7 @@ const MapPage = () => {
             };
         }
         catch{
+            handleOpenMessage('network error ','error')
 
         }
         finally {
@@ -169,7 +169,7 @@ const MapPage = () => {
                     mapRef.current?.setView([centerLat, centerLng], zoom ?? 10, { animate: false });
                 }
             } catch  {
-
+                handleOpenMessage('network error ','error')
             }
         };
         loadInitialData();
@@ -240,16 +240,15 @@ const MapPage = () => {
     return (
         <div className="relative w-full h-screen">
             <GuideTooltip deleteMode={deleteMode} distanceMode={distanceMode} />
-            <DrawControls onDraw={handleDrawAction} />
+            <DrawControls onDraw={handleDrawAction} active={drawingMode} />
             <DeleteButton active={deleteMode} onToggle={() => setDeleteMode(!deleteMode)} />
-
             <MapContainer
                 ref={(ref) => {
                     if (ref && !mapRef.current) {
                         mapRef.current = ref;
                     }
                 }}
-                center={[35.3149, 46.9988]}
+                center={[37.0902, 95.7129]}
                 zoom={13}
                 style={{ height: '100%', width: '100%' }}
             >
