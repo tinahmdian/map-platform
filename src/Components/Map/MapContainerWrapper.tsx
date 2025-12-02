@@ -248,7 +248,8 @@ const MapPage = () => {
                         mapRef.current = ref;
                     }
                 }}
-                center={[37.0902, 95.7129]}
+
+                center={[52.509288,14.581281]}
                 zoom={13}
                 style={{ height: '100%', width: '100%' }}
             >
