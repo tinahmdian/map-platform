@@ -17,7 +17,7 @@ import {MapControls} from "@/Components/Map/MapFeatures/MapControls";
 import SearchInput from "@/Components/Map/MapFeatures/SearchInput";
 import {HeatmapLayer} from "@/Components/Map/MapFeatures/heatMapLayer";
 import {WeatherHeatmapLayer} from "@/Components/Map/MapFeatures/weatherHeatMapLayer";
-import {DeleteTooltip} from "@/Components/Map/MapFeatures/DeleteTooltip";
+import { GuideTooltip} from "@/Components/Map/MapFeatures/GuideTooltip";
 import polyline from "@mapbox/polyline";
 
 declare global {
@@ -51,8 +51,8 @@ const MapPage = () => {
     });
     const handleDrawAction = (type: string) => {
         if (type === "distance") {
+            setDeleteMode(false)
             setDistanceLine([]);
-            console.log(distanceLine)
             setDistanceMode(!distanceMode);
             setDistancePoints([]);
             setDrawingMode("");
@@ -63,24 +63,37 @@ const MapPage = () => {
     };
 
     const [distanceKm, setDistanceKm] = useState<number | null>(null);
+    useEffect(() => {
+        if (deleteMode){
+            setDistanceMode(false)
+            setDistanceLine([]);
+            setDistancePoints([]);
+        }
+    }, [deleteMode]);
     async function getDistance(p1:{ lat: number, lng: number }, p2:{ lat: number, lng: number }) {
-        const url = `https://us1.locationiq.com/v1/directions/driving/${p1.lng},${p1.lat};${p2.lng},${p2.lat}?key=pk.1b4a43969b61b1b0ba70c09d85e847f0&steps=true`;
+        try {
+            const url = `https://us1.locationiq.com/v1/directions/driving/${p1.lng},${p1.lat};${p2.lng},${p2.lat}?key=pk.1b4a43969b61b1b0ba70c09d85e847f0&steps=true`;
+            const res = await fetch(url);
+            const data = await res.json();
+            const distanceMeters = data.routes[0].distance;
+            const durationSeconds = data.routes[0].duration;
+            const polylineEncoded = data.routes[0].geometry;
+            const coords: [number, number][] = polyline.decode(polylineEncoded);
+            setDistanceLine(coords.map(([lat, lng]) => ({ lat, lng })));
 
-        const res = await fetch(url);
-        const data = await res.json();
-        console.log(data)
-        const distanceMeters = data.routes[0].distance;
-        const durationSeconds = data.routes[0].duration;
-        const polylineEncoded = data.routes[0].geometry;
-        const coords: [number, number][] = polyline.decode(polylineEncoded);
+            setDistanceKm(data.routes[0].distance / 1000);
+            return {
+                distanceKm: (distanceMeters / 1000).toFixed(2),
+                durationMin: (durationSeconds / 60).toFixed(1)
+            };
+        }
+        catch{
 
-        setDistanceLine(coords.map(([lat, lng]) => ({ lat, lng })));
-        setDistanceMode(false)
-        setDistanceKm(data.routes[0].distance / 1000);
-        return {
-            distanceKm: (distanceMeters / 1000).toFixed(2),
-            durationMin: (durationSeconds / 60).toFixed(1)
-        };
+        }
+        finally {
+            setDistanceMode(false)
+        }
+
     }
 
     const saveMapState = async (
@@ -226,7 +239,7 @@ const MapPage = () => {
 
     return (
         <div className="relative w-full h-screen">
-            <DeleteTooltip deleteMode={deleteMode} />
+            <GuideTooltip deleteMode={deleteMode} distanceMode={distanceMode} />
             <DrawControls onDraw={handleDrawAction} />
             <DeleteButton active={deleteMode} onToggle={() => setDeleteMode(!deleteMode)} />
 

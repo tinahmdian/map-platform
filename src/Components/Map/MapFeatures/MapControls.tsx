@@ -125,7 +125,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
 
     const handleLayerToggle = (layer: string, visible: boolean) => {
         console.log(`Layer ${layer} visibility: ${visible}`);
-        // Implement your layer visibility logic here
     };
 
     const handleRefreshStats = () => {

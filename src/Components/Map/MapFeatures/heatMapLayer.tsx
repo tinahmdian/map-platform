@@ -116,7 +116,6 @@ export const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
         const heatPoints = calculateAverageCoordinates();
 
         if (heatPoints.length > 0) {
-            console.log('Heatmap points:', heatPoints.length);
 
             heatLayerRef.current = L.heatLayer(heatPoints, {
                 radius,
