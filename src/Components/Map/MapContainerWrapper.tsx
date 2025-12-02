@@ -31,7 +31,7 @@ const MapPage = () => {
     const { drawingMode, deleteMode, setDeleteMode, triggerDraw, activePopup, setActivePopup, setDrawingMode } = useDrawing();
     const [distanceMode, setDistanceMode] = useState(false);
     const [distancePoints, setDistancePoints] = useState<{ lat: number, lng: number }[]>([]);
-    const [distanceLine, setDistanceLine] = useState<>([]);
+    const [distanceLine, setDistanceLine] = useState<{ lat: number, lng: number }[]>([]);
 
     const mapRef = useRef<L.Map | null>(null);
     const [tempLayer, setTempLayer] = React.useState<any>(null);
@@ -63,18 +63,18 @@ const MapPage = () => {
     };
 
     const [distanceKm, setDistanceKm] = useState<number | null>(null);
-    async function getDistance(p1, p2) {
+    async function getDistance(p1:{ lat: number, lng: number }, p2:{ lat: number, lng: number }) {
         const url = `https://us1.locationiq.com/v1/directions/driving/${p1.lng},${p1.lat};${p2.lng},${p2.lat}?key=pk.1b4a43969b61b1b0ba70c09d85e847f0&steps=true`;
 
         const res = await fetch(url);
         const data = await res.json();
-        console.log(data)
         const distanceMeters = data.routes[0].distance;
         const durationSeconds = data.routes[0].duration;
         const polylineEncoded = data.routes[0].geometry;
-        const coords = polyline.decode(polylineEncoded);
-        setDistanceLine(coords.map(([lat, lng]) => [lat, lng]));
-setDistanceMode(false)
+        const coords: [number, number][] = polyline.decode(polylineEncoded);
+
+        setDistanceLine(coords.map(([lat, lng]) => ({ lat, lng })));
+        setDistanceMode(false)
         setDistanceKm(data.routes[0].distance / 1000);
         return {
             distanceKm: (distanceMeters / 1000).toFixed(2),
@@ -111,8 +111,6 @@ setDistanceMode(false)
         useMapEvents({
             click: async (e) => {
                 if (!distanceMode) return;
-
-                const { lat, lng } = e.latlng;
                 const newPoint = { lat: e.latlng.lat, lng: e.latlng.lng };
                 const newPoints = [...distancePoints, newPoint];
                 setDistancePoints(newPoints);
