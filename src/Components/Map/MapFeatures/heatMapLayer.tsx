@@ -13,42 +13,14 @@ interface HeatmapLayerProps {
     blur?: number;
     maxZoom?: number;
 }
-// declare module "leaflet" {
-//     function heatLayer(
-//         latlngs: L.LatLngExpression[],
-//         options?: {
-//             minOpacity?: number;
-//             maxZoom?: number;
-//             radius?: number;
-//             blur?: number;
-//             gradient?: Record<number, string>;
-//             max?: number;
-//         }
-//     ): L.Layer;
-// }
-declare module "leaflet" {
-    interface HeatLayer extends L.Layer {
-        setLatLngs(latlngs: L.LatLngExpression[]): this;
-        addLatLng(latlng: L.LatLngExpression): this;
-    }
-
-    function heatLayer(
-        latlngs: L.LatLngExpression[],
-        options?: {
-            minOpacity?: number;
-            maxZoom?: number;
-            radius?: number;
-            blur?: number;
-            gradient?: Record<number, string>;
-            max?: number;
-        }
-    ): HeatLayer;
+declare module 'leaflet' {
+    function heatLayer(latlngs: [number, number, number][], options?: {
+        radius?: number;
+        blur?: number;
+        maxZoom?: number;
+        gradient?: Record<number, string>;
+    }): L.Layer;
 }
-//
-// interface HeatLayer extends L.Layer {
-//     setLatLngs(latlngs: L.LatLngExpression[]): this;
-//     addLatLng(latlng: L.LatLngExpression): this;
-// }
 
 export const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
                                                               markers,
