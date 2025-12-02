@@ -13,6 +13,14 @@ interface HeatmapLayerProps {
     blur?: number;
     maxZoom?: number;
 }
+declare module 'leaflet' {
+    function heatLayer(latlngs: [number, number, number][], options?: {
+        radius?: number;
+        blur?: number;
+        maxZoom?: number;
+        gradient?: Record<number, string>;
+    }): L.Layer;
+}
 
 export const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
                                                               markers,
@@ -24,16 +32,14 @@ export const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
                                                               maxZoom = 6,
                                                           }) => {
     const map = useMap();
-    const heatLayerRef = useRef<L.HeatLayer | null>(null);
+    const heatLayerRef = useRef<L.Layer | null>(null);
 
-    // Calculate average coordinates for heatmap focus
     const calculateAverageCoordinates = (): [number, number, number][] => {
         const points: [number, number, number][] = [];
         let totalLat = 0;
         let totalLng = 0;
         let count = 0;
 
-        // Process markers
         markers.forEach(marker => {
             if (marker.lat && marker.lng) {
                 totalLat += marker.lat;
@@ -43,12 +49,10 @@ export const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
             }
         });
 
-        // Process shapes and extract coordinates
         shapes.forEach(shape => {
             const geometry = shape.data?.geometry;
 
             if (geometry?.type === 'Polygon' && geometry.coordinates?.[0]) {
-                // For polygons, use all vertices
                 geometry.coordinates[0].forEach((coord: number[]) => {
                     const [lng, lat] = coord;
                     if (lat && lng) {
@@ -60,7 +64,6 @@ export const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
                 });
             }
             else if (geometry?.type === 'Circle' && shape.data?.properties?.center) {
-                // For circles, use center point
                 const center = shape.data.properties.center;
                 const [lng, lat] = center;
                 if (lat && lng) {
@@ -69,7 +72,6 @@ export const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
                     count++;
                     points.push([lat, lng, intensity * 0.9]);
 
-                    // Add points around the circle for better heatmap distribution
                     const circleRadius = shape.data.properties.radius || 50;
                     for (let i = 0; i < 8; i++) {
                         const angle = (i / 8) * 2 * Math.PI;
@@ -80,7 +82,6 @@ export const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
                 }
             }
             else if (geometry?.type === 'Rectangle' && geometry.coordinates?.[0]) {
-                // For rectangles, use all corners
                 geometry.coordinates[0].forEach((coord: number[]) => {
                     const [lng, lat] = coord;
                     if (lat && lng) {
@@ -93,11 +94,10 @@ export const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
             }
         });
 
-        // If we have points, add the average center point with higher intensity
         if (count > 0 && points.length > 0) {
             const avgLat = totalLat / count;
             const avgLng = totalLng / count;
-            points.push([avgLat, avgLng, intensity * 1.5]); // Higher intensity for center
+            points.push([avgLat, avgLng, intensity * 1.5]);
         }
 
         return points;
@@ -113,13 +113,10 @@ export const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
             return;
         }
 
-        // Create heatmap layer
         const heatPoints = calculateAverageCoordinates();
 
         if (heatPoints.length > 0) {
-            console.log('Heatmap points:', heatPoints.length); // Debug log
 
-            // @ts-ignore - leaflet.heat types might not be available
             heatLayerRef.current = L.heatLayer(heatPoints, {
                 radius,
                 blur,
@@ -133,10 +130,9 @@ export const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
                 }
             }).addTo(map);
         } else {
-            console.log('No heatmap points generated'); // Debug log
+            console.log('No heatmap points generated');
         }
 
-        // Cleanup function
         return () => {
             if (heatLayerRef.current) {
                 map.removeLayer(heatLayerRef.current);
