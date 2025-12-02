@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { db } from '@/db/db';
-import {useDrawing} from "@/utils/useDrawing";
+import {useDrawing} from "@/context/useDrawing";
 
 export function useMapData() {
     const {setDeleteMode}=useDrawing()
