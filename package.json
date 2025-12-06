@@ -18,7 +18,7 @@
     "leaflet.heat": "^0.2.0",
     "lucide-react": "^0.553.0",
     "mapbox": "^1.0.0-beta10",
-    "next": "^16.0.4",
+    "next": "^16.0.7",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-draggable": "^4.5.0",
