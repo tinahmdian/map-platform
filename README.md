@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Leaflet Next.js Project
 
-## Getting Started
+A powerful interactive mapping application built with **Next.js**, **Leaflet**, **Tailwind CSS**, and **Dexie.js**. This project allows users to draw shapes, place markers, calculate distances, switch base maps, view weather-based heatmaps, export data, and retrieve information about the selected geographic area.
 
-First, run the development server:
+##  Features
+
+###  Interactive Map (Leaflet)
+
+* Draw shapes (polygons, polylines, circles) on the map
+* Place and Delete markers
+* Store all shapes and markers using **Dexie.js** (IndexedDB)
+* View saved shapes and markers even after page refresh
+
+###  Location Tools
+
+* Get the user's current geolocation
+* Pan/zoom controls
+* Move to specific coordinates
+
+###  Distance Measurement
+
+* Calculate distance between two selected points
+* Display distance in kilometers
+
+###  Map Layers & Base Maps
+
+* Switch between multiple base maps (street, satellite, terrain, etc.)
+* Weather-based heatmaps
+* Toggle shape layers
+* Customizable overlay layers
+
+###  Region Information
+
+* View information about the area currently under the cursor or viewport
+
+###  Data Export
+
+* Export shapes, markers, or map state
+* Download data as JSON
+
+###  Built with Tailwind CSS
+
+* Clean, responsive UI
+* Custom controls styled using Tailwind
+
+##  Tech Stack
+
+* **Next.js** – App framework
+* **React Leaflet / Leaflet.js** – Map engine
+* **Dexie.js** – Local database (IndexedDB wrapper)
+* **Tailwind CSS** – UI styling
+* **TypeScript** – Type-safe development
+
+## 📦 Installation
+
+```bash
+npm install
+```
+
+##  Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+##  Data Persistence with Dexie
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Shapes and markers are stored locally using Dexie.js:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* Drawn shapes are saved automatically
+* Markers persist between sessions
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+##  Distance Calculation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Distance between two points is calculated using the Haversine formula and displayed in a custom UI panel.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+##  Heatmaps & Weather Layers
 
-## Deploy on Vercel
+* Weather overlays (temperature, wind, rain, etc.)
+* Heatmaps based on selected datasets
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+##  Settings Panel
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Users can:
+
+* Switch maps
+* Toggle layers
+* View heatmaps
+* Export data
+* Inspect region information
+
+##  Exporting Data
+
+You can export:
+
+* All shapes
+* All markers
+* The full map state (JSON)
+
+## Security Notes
+
+Ensure you are running a **patched** version of Next.js due to CVE-2025-66478.
+Recommended:
+
+```bash
+npm install next@latest
+```
+
+
