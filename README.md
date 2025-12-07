@@ -1,6 +1,10 @@
 # Leaflet Next.js Project
 
 A powerful interactive mapping application built with **Next.js**, **Leaflet**, **Tailwind CSS**, and **Dexie.js**. This project allows users to draw shapes, place markers, calculate distances, switch base maps, view weather-based heatmaps, export data, and retrieve information about the selected geographic area.
+##  Live Demo
+You can view the live version here:  
+[![Vercel](https://img.shields.io/badge/Live%20Demo-Vercel-black?logo=vercel)](https://nextjs-leaflet-gis.vercel.app/)
+
 
 ##  Features
 
