@@ -10,8 +10,6 @@ A powerful interactive mapping application built with **Next.js**, **Leaflet**, 
 * Place and Delete markers
 * Store all shapes and markers using **Dexie.js** (IndexedDB)
 * View saved shapes and markers even after page refresh
-<img width="1914" height="907" alt="image" src="https://github.com/user-attachments/assets/fd1e3f06-8d52-4824-ab1a-ff6cffb392c7" />
-<img width="1902" height="908" alt="image" src="https://github.com/user-attachments/assets/bf006bfa-9f9b-4f8b-904e-b68a3b8e6420" />
 
 ###  Location Tools
 
@@ -23,6 +21,7 @@ A powerful interactive mapping application built with **Next.js**, **Leaflet**, 
 
 * Calculate distance between two selected points
 * Display distance in kilometers
+<img width="1912" height="905" alt="image" src="https://github.com/user-attachments/assets/f8c41a80-7774-4cff-8f3a-43e605a1662e" />
 
 ###  Map Layers & Base Maps
 
@@ -30,6 +29,8 @@ A powerful interactive mapping application built with **Next.js**, **Leaflet**, 
 * Weather-based heatmaps
 * Toggle shape layers
 * Customizable overlay layers
+<img width="1919" height="912" alt="image" src="https://github.com/user-attachments/assets/fb1757f9-970e-4d2e-9ab6-aa19efca23f9" />
+<img width="1919" height="904" alt="image" src="https://github.com/user-attachments/assets/889263ba-b6e6-4a72-9b4a-5f51e7b28d3e" />
 
 ###  Region Information
 
