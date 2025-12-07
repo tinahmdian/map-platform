@@ -58,7 +58,7 @@ You can view the live version here:
 * **Tailwind CSS** – UI styling
 * **TypeScript** – Type-safe development
 
-## 📦 Installation
+##  Installation
 
 ```bash
 npm install
