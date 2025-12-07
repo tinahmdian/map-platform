@@ -10,6 +10,8 @@ A powerful interactive mapping application built with **Next.js**, **Leaflet**, 
 * Place and Delete markers
 * Store all shapes and markers using **Dexie.js** (IndexedDB)
 * View saved shapes and markers even after page refresh
+<img width="1914" height="907" alt="image" src="https://github.com/user-attachments/assets/fd1e3f06-8d52-4824-ab1a-ff6cffb392c7" />
+<img width="1902" height="908" alt="image" src="https://github.com/user-attachments/assets/bf006bfa-9f9b-4f8b-904e-b68a3b8e6420" />
 
 ###  Location Tools
 
