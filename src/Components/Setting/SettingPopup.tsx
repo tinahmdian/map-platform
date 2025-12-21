@@ -130,20 +130,25 @@ export const SettingsPopup: React.FC<SettingsPopupProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 z-[2000] flex items-end m-3 justify-end bg-opacity-50">
-            <div className="bg-white rounded-2xl shadow-2xl w-126 max-h-[80vh] overflow-hidden">
+        <div  className="fixed inset-0 z-[2000] flex items-end justify-end bg-black/50">
+            <div  className="m-3 bg-white rounded-2xl shadow-2xl w-[32rem] max-h-[80vh] flex flex-col overflow-hidden">
+
+                {/* Header */}
                 <Header onClose={onClose} />
 
+                {/* Tabs */}
                 <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
-                <div className="p-6 max-h-96 overflow-y-auto">
+                {/* Scrollable Content */}
+                <div className="flex-1 overflow-y-auto p-6">
                     {renderTabContent()}
                 </div>
 
+                {/* Footer */}
                 <Footer onApply={handleApplySettings} />
             </div>
         </div>
-    );
+    )
 };
 
 const Header: React.FC<{ onClose: () => void }> = ({ onClose }) => (
